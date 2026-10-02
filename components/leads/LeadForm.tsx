@@ -12,6 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 
 interface LeadFormProps {
@@ -20,12 +27,41 @@ interface LeadFormProps {
   onSubmit: (data: LeadFormData) => Promise<void>;
 }
 
+const BUDGET_OPTIONS = [
+  "Exploring / Not specified",
+  "Under ₹30 Lakhs",
+  "₹30 Lakhs - ₹50 Lakhs",
+  "₹50 Lakhs - ₹1 Crore",
+  "₹1 Crore - ₹3 Crores",
+  "₹3 Crores - ₹5 Crores",
+  "₹5 Crores+",
+];
+
+const TIMELINE_OPTIONS = [
+  "Exploring / No fixed timeline",
+  "Immediate (0-1 month)",
+  "Short-term (1-3 months)",
+  "Medium-term (3-6 months)",
+  "Long-term (6+ months)",
+];
+
+const REQUIREMENT_OPTIONS = [
+  "Exploring / Not specified",
+  "1 BHK Apartment",
+  "2 BHK Apartment",
+  "3 BHK Apartment",
+  "4+ BHK Apartment",
+  "Villa / Independent House",
+  "Plot / Land",
+  "Commercial Property",
+];
+
 const INITIAL_FORM: LeadFormData = {
   name: "",
   location: "",
-  propertyRequirement: "",
-  budget: "",
-  buyingTimeline: "",
+  propertyRequirement: REQUIREMENT_OPTIONS[0],
+  budget: BUDGET_OPTIONS[0],
+  buyingTimeline: TIMELINE_OPTIONS[0],
   customerMessage: "",
 };
 
@@ -38,11 +74,6 @@ export default function LeadForm({ open, onOpenChange, onSubmit }: LeadFormProps
     const newErrors: Partial<Record<keyof LeadFormData, string>> = {};
     if (!form.name.trim()) newErrors.name = "Name is required";
     if (!form.location.trim()) newErrors.location = "Location is required";
-    if (!form.propertyRequirement.trim())
-      newErrors.propertyRequirement = "Property requirement is required";
-    if (!form.budget.trim()) newErrors.budget = "Budget is required";
-    if (!form.buyingTimeline.trim())
-      newErrors.buyingTimeline = "Buying timeline is required";
     if (!form.customerMessage.trim())
       newErrors.customerMessage = "Customer message is required";
     setErrors(newErrors);
@@ -81,22 +112,22 @@ export default function LeadForm({ open, onOpenChange, onSubmit }: LeadFormProps
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
-          <div className="space-y-2">
-            <Label htmlFor="lead-name">Name</Label>
-            <Input
-              id="lead-name"
-              placeholder="e.g. Rahul Sharma"
-              value={form.name}
-              onChange={(e) => updateField("name", e.target.value)}
-            />
-            {errors.name && (
-              <p className="text-xs text-destructive">{errors.name}</p>
-            )}
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="lead-location">Location</Label>
+              <Label htmlFor="lead-name">Name <span className="text-destructive">*</span></Label>
+              <Input
+                id="lead-name"
+                placeholder="e.g. Rahul Sharma"
+                value={form.name}
+                onChange={(e) => updateField("name", e.target.value)}
+              />
+              {errors.name && (
+                <p className="text-xs text-destructive">{errors.name}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="lead-location">Location <span className="text-destructive">*</span></Label>
               <Input
                 id="lead-location"
                 placeholder="e.g. Mumbai, Andheri"
@@ -107,57 +138,69 @@ export default function LeadForm({ open, onOpenChange, onSubmit }: LeadFormProps
                 <p className="text-xs text-destructive">{errors.location}</p>
               )}
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="lead-budget">Budget</Label>
-              <Input
-                id="lead-budget"
-                placeholder="e.g. ₹70L"
-                value={form.budget}
-                onChange={(e) => updateField("budget", e.target.value)}
-              />
-              {errors.budget && (
-                <p className="text-xs text-destructive">{errors.budget}</p>
-              )}
-            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="lead-requirement">Property Requirement</Label>
-              <Input
-                id="lead-requirement"
-                placeholder="e.g. 2BHK apartment"
+              <Select
                 value={form.propertyRequirement}
-                onChange={(e) =>
-                  updateField("propertyRequirement", e.target.value)
-                }
-              />
-              {errors.propertyRequirement && (
-                <p className="text-xs text-destructive">
-                  {errors.propertyRequirement}
-                </p>
-              )}
+                onValueChange={(v) => updateField("propertyRequirement", v as string)}
+              >
+                <SelectTrigger id="lead-requirement">
+                  <SelectValue placeholder="Exploring / Not specified" />
+                </SelectTrigger>
+                <SelectContent>
+                  {REQUIREMENT_OPTIONS.map((opt) => (
+                    <SelectItem key={opt} value={opt}>
+                      {opt}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="lead-timeline">Buying Timeline</Label>
-              <Input
-                id="lead-timeline"
-                placeholder="e.g. 3 months"
-                value={form.buyingTimeline}
-                onChange={(e) => updateField("buyingTimeline", e.target.value)}
-              />
-              {errors.buyingTimeline && (
-                <p className="text-xs text-destructive">
-                  {errors.buyingTimeline}
-                </p>
-              )}
+              <Label htmlFor="lead-budget">Budget</Label>
+              <Select
+                value={form.budget}
+                onValueChange={(v) => updateField("budget", v as string)}
+              >
+                <SelectTrigger id="lead-budget">
+                  <SelectValue placeholder="Exploring / Not specified" />
+                </SelectTrigger>
+                <SelectContent>
+                  {BUDGET_OPTIONS.map((opt) => (
+                    <SelectItem key={opt} value={opt}>
+                      {opt}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="lead-message">Customer Message / Inquiry</Label>
+            <Label htmlFor="lead-timeline">Buying Timeline</Label>
+            <Select
+              value={form.buyingTimeline}
+              onValueChange={(v) => updateField("buyingTimeline", v as string)}
+            >
+              <SelectTrigger id="lead-timeline">
+                <SelectValue placeholder="Exploring / No fixed timeline" />
+              </SelectTrigger>
+              <SelectContent>
+                {TIMELINE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt} value={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="lead-message">Customer Message / Inquiry <span className="text-destructive">*</span></Label>
             <Textarea
               id="lead-message"
               placeholder="Paste the customer's inquiry, transcript, or message..."
