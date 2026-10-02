@@ -22,6 +22,7 @@ interface LeadDetailsProps {
   onRetryAnalysis: () => void;
   onDelete: () => void;
   isAnalyzing: boolean;
+  onUpdate?: (updatedLead: Lead) => void;
 }
 
 export default function LeadDetails({
@@ -29,6 +30,7 @@ export default function LeadDetails({
   onRetryAnalysis,
   onDelete,
   isAnalyzing,
+  onUpdate,
 }: LeadDetailsProps) {
   return (
     <div className="space-y-6">
@@ -114,7 +116,21 @@ export default function LeadDetails({
       ) : lead.analysis ? (
         <>
           <LeadAnalysisComponent analysis={lead.analysis} />
-          <SuggestedResponse response={lead.analysis.suggestedResponse} />
+          <SuggestedResponse 
+            response={lead.analysis.suggestedResponse} 
+            lead={lead}
+            onUpdateResponse={onUpdate ? (newResp) => {
+              if (lead.analysis) {
+                onUpdate({
+                  ...lead,
+                  analysis: {
+                    ...lead.analysis,
+                    suggestedResponse: newResp
+                  }
+                });
+              }
+            } : undefined}
+          />
         </>
       ) : (
         <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">

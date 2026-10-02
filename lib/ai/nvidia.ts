@@ -1,7 +1,7 @@
 import { AIProvider } from "./client";
 import { LeadFormData, LeadAnalysis } from "@/types/lead";
 import { ChatMessage } from "@/types/chat";
-import { buildAnalysisPrompt, buildChatSystemPrompt, formatMessagesForAPI } from "./prompts";
+import { buildAnalysisPrompt, buildChatSystemPrompt, buildRefinePrompt, formatMessagesForAPI } from "./prompts";
 import { leadAnalysisSchema } from "./schemas";
 
 const NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
@@ -108,6 +108,48 @@ export class NvidiaProvider implements AIProvider {
     }
 
     return content.trim();
+  }
+
+  async refineResponse(
+    lead: LeadFormData,
+    currentResponse: string,
+    prompt: string
+  ): Promise<string> {
+    const systemPrompt = buildRefinePrompt(lead, currentResponse);
+
+    const response = await fetch(NVIDIA_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: this.model,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: `Instruction to refine the response: ${prompt}` },
+        ],
+        temperature: 0.5,
+        max_tokens: 1024,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `NVIDIA API error (${response.status}): ${errorText}`
+      );
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content;
+
+    if (!content) {
+      throw new Error("No content in NVIDIA API response");
+    }
+
+    // clean up potential markdown formatting that the LLM might add
+    return content.replace(/^"|"$/g, "").trim();
   }
 }
 

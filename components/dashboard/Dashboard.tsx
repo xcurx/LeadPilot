@@ -210,6 +210,7 @@ export default function Dashboard() {
                 onRetryAnalysis={() => analyzeLead(selectedLead)}
                 onDelete={() => handleDeleteLead(selectedLead.id)}
                 isAnalyzing={analyzingLeadId === selectedLead.id}
+                onUpdate={handleLeadUpdate}
               />
 
               <Separator className="bg-border h-4" />
