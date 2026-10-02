@@ -25,6 +25,7 @@ const CONFIG: Record<PriorityLabel, { icon: React.ElementType, color: string }> 
 export default function LeadListItem({ lead, isSelected, onClick }: LeadListItemProps) {
   const priorityLabel = lead.priorityLabel ?? "COLD";
   const priorityScore = lead.priorityScore ?? 0;
+  const hasPendingFollowUp = lead.followUps?.some((f) => !f.completedAt);
 
   return (
     <button
@@ -59,7 +60,7 @@ export default function LeadListItem({ lead, isSelected, onClick }: LeadListItem
         </span>
         <span className="shrink-0">{lead.budget}</span>
       </div>
-      {lead.followUpAt && (
+      {hasPendingFollowUp && (
         <div className="flex items-center gap-1 text-xs text-blue-300 mt-1.5">
           <Calendar className="h-3 w-3" />
           Follow-up scheduled
