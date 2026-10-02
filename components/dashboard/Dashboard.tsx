@@ -204,7 +204,7 @@ export default function Dashboard() {
         {/* Content */}
         {selectedLead ? (
           <div className="flex-1 overflow-y-auto bg-background/50">
-            <div className="max-w-4xl mx-auto p-8 space-y-8">
+            <div className="max-w-4xl mx-auto p-8 space-y-7">
               <LeadDetails
                 lead={selectedLead}
                 onRetryAnalysis={() => analyzeLead(selectedLead)}
@@ -212,12 +212,12 @@ export default function Dashboard() {
                 isAnalyzing={analyzingLeadId === selectedLead.id}
               />
 
-              <Separator className="bg-border/30" />
+              <Separator className="bg-border h-4" />
 
               {/* Copilot */}
               <Copilot lead={selectedLead} />
 
-              <Separator className="bg-border/30" />
+              <Separator className="bg-border h-4" />
 
               {/* Follow-up */}
               <FollowUpTracker

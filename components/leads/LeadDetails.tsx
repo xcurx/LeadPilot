@@ -103,7 +103,7 @@ export default function LeadDetails({
         </div>
       </div>
 
-      <Separator className="bg-border/30" />
+      <Separator className="bg-border" />
 
       {/* Analysis */}
       {isAnalyzing ? (

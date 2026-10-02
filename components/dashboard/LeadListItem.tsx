@@ -29,7 +29,7 @@ export default function LeadListItem({ lead, isSelected, onClick }: LeadListItem
         "hover:bg-white/5 cursor-pointer",
         PRIORITY_ACCENT[priorityLabel] || "border-l-white/20",
         isSelected
-          ? "bg-white/10 border-l-primary"
+          ? "bg-white/10"
           : "bg-transparent"
       )}
     >

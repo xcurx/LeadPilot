@@ -88,7 +88,7 @@ export default function LeadAnalysis({ analysis }: LeadAnalysisProps) {
             {analysis.requirements.map((req, i) => (
               <li
                 key={i}
-                className="text-sm text-muted-foreground flex items-start gap-2"
+                className="text-sm text-muted-foreground flex items-end gap-2"
               >
                 <span className="text-primary mt-1.5 shrink-0">•</span>
                 {req}
@@ -108,7 +108,7 @@ export default function LeadAnalysis({ analysis }: LeadAnalysisProps) {
               {analysis.concerns.map((concern, i) => (
                 <li
                   key={i}
-                  className="text-sm text-muted-foreground flex items-start gap-2"
+                  className="text-sm text-muted-foreground flex items-end gap-2"
                 >
                   <span className="text-amber-400 mt-1.5 shrink-0">•</span>
                   {concern}
