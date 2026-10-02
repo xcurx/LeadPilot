@@ -26,6 +26,8 @@ import { v4 as uuidv4 } from "uuid";
 interface FollowUpTrackerProps {
   lead: Lead;
   onUpdate: (updatedLead: Lead) => void;
+  preFillNote?: string;
+  onClearPreFill?: () => void;
 }
 
 const FOLLOW_UP_TYPES: { value: FollowUpType; icon: typeof Phone }[] = [
@@ -56,7 +58,7 @@ function getTypeIcon(type: FollowUpType) {
   return match?.icon ?? MoreHorizontal;
 }
 
-export default function FollowUpTracker({ lead, onUpdate }: FollowUpTrackerProps) {
+export default function FollowUpTracker({ lead, onUpdate, preFillNote, onClearPreFill }: FollowUpTrackerProps) {
   const [followUps, setFollowUps] = useState<FollowUpEntry[]>(lead.followUps ?? []);
 
   // new follow-up form
@@ -72,6 +74,16 @@ export default function FollowUpTracker({ lead, onUpdate }: FollowUpTrackerProps
   useEffect(() => {
     setFollowUps(lead.followUps ?? []);
   }, [lead]);
+
+  useEffect(() => {
+    if (preFillNote) {
+      setShowForm(true);
+      setNewNote(preFillNote);
+      if (onClearPreFill) {
+        onClearPreFill();
+      }
+    }
+  }, [preFillNote, onClearPreFill]);
 
   const persist = async (updatedFollowUps: FollowUpEntry[], extraUpdates?: Partial<Lead>) => {
     const updates: Partial<Lead> = { followUps: updatedFollowUps, ...extraUpdates };
@@ -119,7 +131,7 @@ export default function FollowUpTracker({ lead, onUpdate }: FollowUpTrackerProps
   const nextPending = followUps.find((f) => !f.completedAt);
 
   return (
-    <Card className="border-border bg-card shadow-sm">
+    <Card id="follow-up-tracker" className="border-border bg-card shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">

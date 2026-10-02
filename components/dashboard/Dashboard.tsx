@@ -29,6 +29,12 @@ export default function Dashboard() {
   const [analyzingLeadId, setAnalyzingLeadId] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [followUpPreFill, setFollowUpPreFill] = useState("");
+
+  // clear prefill when changing leads
+  useEffect(() => {
+    setFollowUpPreFill("");
+  }, [selectedLeadId]);
 
   const selectedLead = leads.find((l) => l.id === selectedLeadId) || null;
 
@@ -209,6 +215,7 @@ export default function Dashboard() {
                 onDelete={() => handleDeleteLead(selectedLead.id)}
                 isAnalyzing={analyzingLeadId === selectedLead.id}
                 onUpdate={handleLeadUpdate}
+                onScheduleFollowUp={(note) => setFollowUpPreFill(note)}
               />
 
               <Separator className="bg-border h-4" />
@@ -222,6 +229,8 @@ export default function Dashboard() {
               <FollowUpTracker
                 lead={selectedLead}
                 onUpdate={handleLeadUpdate}
+                preFillNote={followUpPreFill}
+                onClearPreFill={() => setFollowUpPreFill("")}
               />
             </div>
           </div>

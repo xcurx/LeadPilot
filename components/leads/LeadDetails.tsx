@@ -23,6 +23,7 @@ interface LeadDetailsProps {
   onDelete: () => void;
   isAnalyzing: boolean;
   onUpdate?: (updatedLead: Lead) => void;
+  onScheduleFollowUp?: (note: string) => void;
 }
 
 export default function LeadDetails({
@@ -31,6 +32,7 @@ export default function LeadDetails({
   onDelete,
   isAnalyzing,
   onUpdate,
+  onScheduleFollowUp,
 }: LeadDetailsProps) {
   return (
     <div className="space-y-6">
@@ -115,7 +117,10 @@ export default function LeadDetails({
         </div>
       ) : lead.analysis ? (
         <>
-          <LeadAnalysisComponent analysis={lead.analysis} />
+          <LeadAnalysisComponent 
+            analysis={lead.analysis} 
+            onScheduleFollowUp={onScheduleFollowUp}
+          />
           <SuggestedResponse 
             response={lead.analysis.suggestedResponse} 
             lead={lead}

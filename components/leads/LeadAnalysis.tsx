@@ -13,6 +13,7 @@ import {
 
 interface LeadAnalysisProps {
   analysis: LeadAnalysisType;
+  onScheduleFollowUp?: (note: string) => void;
 }
 
 const LEVEL_STYLES: Record<string, { text: string; dot: string }> = {
@@ -21,7 +22,7 @@ const LEVEL_STYLES: Record<string, { text: string; dot: string }> = {
   low: { text: "text-emerald-600", dot: "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" },
 };
 
-export default function LeadAnalysis({ analysis }: LeadAnalysisProps) {
+export default function LeadAnalysis({ analysis, onScheduleFollowUp }: LeadAnalysisProps) {
   return (
     <Card className="border-border bg-card shadow-sm">
       <CardHeader className="pb-3">
@@ -120,9 +121,22 @@ export default function LeadAnalysis({ analysis }: LeadAnalysisProps) {
 
         {/* Recommended Action */}
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Lightbulb className="h-4 w-4 text-emerald-400" />
-            <h4 className="text-sm font-medium">Recommended Action</h4>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Lightbulb className="h-4 w-4 text-emerald-400" />
+              <h4 className="text-sm font-medium">Recommended Action</h4>
+            </div>
+            {onScheduleFollowUp && (
+              <button
+                onClick={() => {
+                  onScheduleFollowUp(analysis.recommendedAction);
+                  document.getElementById("follow-up-tracker")?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="text-[11px] font-semibold text-emerald-600 bg-emerald-500/10 hover:bg-emerald-500/20 px-2 py-1 rounded transition-colors cursor-pointer"
+              >
+                Schedule Follow-up
+              </button>
+            )}
           </div>
           <p className="text-sm text-muted-foreground pl-6 bg-emerald-500/5 border border-emerald-500/10 rounded-lg p-3">
             {analysis.recommendedAction}
