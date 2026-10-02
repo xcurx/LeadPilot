@@ -1,7 +1,7 @@
 import { PriorityLabel } from "@/types/lead";
-import { getPriorityEmoji } from "@/lib/scoring";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { Flame, Snowflake, Sun } from "lucide-react";
 
 interface PriorityBadgeProps {
   label: PriorityLabel;
@@ -9,22 +9,27 @@ interface PriorityBadgeProps {
   size?: "sm" | "md";
 }
 
-const BADGE_STYLES: Record<PriorityLabel, string> = {
-  HOT: "bg-red-500/20 text-red-400 border-red-500/30",
-  WARM: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  COLD: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+const CONFIG = {
+  HOT: { icon: Flame, color: "text-red-500" },
+  WARM: { icon: Sun, color: "text-amber-500" },
+  COLD: { icon: Snowflake, color: "text-blue-400" },
 };
 
 export default function PriorityBadge({ label, score, size = "sm" }: PriorityBadgeProps) {
+  const { icon: Icon, color } = CONFIG[label];
+
   return (
     <Badge
       variant="outline"
       className={cn(
-        BADGE_STYLES[label],
-        size === "md" ? "text-sm px-3 py-1" : "text-xs px-2 py-0.5"
+        "bg-white border-border/60 shadow-sm font-semibold tracking-wider text-foreground",
+        size === "md" ? "text-xs px-3 py-1.5 gap-1.5" : "text-[10px] px-2 py-1 gap-1"
       )}
     >
-      {getPriorityEmoji(label)} {label} · {score}
+      <Icon className={cn(color, size === "md" ? "w-4.5 h-4.5" : "w-3.5 h-3.5")} />
+      <span>{label}</span>
+      <span className="text-muted-foreground font-normal px-0.5">|</span>
+      <span className={color}>{score}</span>
     </Badge>
   );
 }

@@ -1,9 +1,8 @@
 "use client";
 
-import { Lead } from "@/types/lead";
-import { getPriorityEmoji } from "@/lib/scoring";
+import { Lead, PriorityLabel } from "@/types/lead";
 import { cn } from "@/lib/utils";
-import { MapPin, Calendar } from "lucide-react";
+import { MapPin, Calendar, Flame, Sun, Snowflake } from "lucide-react";
 
 interface LeadListItemProps {
   lead: Lead;
@@ -11,10 +10,16 @@ interface LeadListItemProps {
   onClick: () => void;
 }
 
-const PRIORITY_ACCENT: Record<string, string> = {
+const PRIORITY_ACCENT: Record<PriorityLabel, string> = {
   HOT: "border-l-red-500",
   WARM: "border-l-amber-500",
-  COLD: "border-l-emerald-500",
+  COLD: "border-l-blue-400",
+};
+
+const CONFIG: Record<PriorityLabel, { icon: React.ElementType, color: string }> = {
+  HOT: { icon: Flame, color: "text-red-400" },
+  WARM: { icon: Sun, color: "text-amber-400" },
+  COLD: { icon: Snowflake, color: "text-blue-400" },
 };
 
 export default function LeadListItem({ lead, isSelected, onClick }: LeadListItemProps) {
@@ -37,9 +42,15 @@ export default function LeadListItem({ lead, isSelected, onClick }: LeadListItem
         <span className="font-medium text-sm text-white truncate">
           {lead.name}
         </span>
-        <span className="text-xs font-mono text-gray-400 ml-2 shrink-0">
-          {getPriorityEmoji(priorityLabel)} {priorityScore}
-        </span>
+        {(() => {
+          const { icon: Icon, color } = CONFIG[priorityLabel];
+          return (
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-black/20 border border-white/5 ml-2 shrink-0">
+              <Icon className={cn("w-3.5 h-3.5", color)} />
+              <span className={cn("text-[10px] font-bold", color)}>{priorityScore}</span>
+            </div>
+          );
+        })()}
       </div>
       <div className="flex items-center gap-3 text-xs text-gray-400">
         <span className="flex items-center gap-1 truncate">

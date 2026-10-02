@@ -4,7 +4,7 @@ import { Lead, PriorityLabel } from "@/types/lead";
 import LeadListItem from "./LeadListItem";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Users } from "lucide-react";
+import { Users, Flame, Sun, Snowflake } from "lucide-react";
 
 interface LeadListProps {
   leads: Lead[];
@@ -14,11 +14,11 @@ interface LeadListProps {
   onFilterChange: (filter: PriorityLabel | "ALL") => void;
 }
 
-const FILTERS: { label: string; value: PriorityLabel | "ALL" }[] = [
+const FILTERS: { label: string; value: PriorityLabel | "ALL"; icon?: React.ElementType; color?: string }[] = [
   { label: "All", value: "ALL" },
-  { label: "🔥 Hot", value: "HOT" },
-  { label: "🟡 Warm", value: "WARM" },
-  { label: "🟢 Cold", value: "COLD" },
+  { label: "Hot", value: "HOT", icon: Flame, color: "text-red-400" },
+  { label: "Warm", value: "WARM", icon: Sun, color: "text-amber-400" },
+  { label: "Cold", value: "COLD", icon: Snowflake, color: "text-blue-400" },
 ];
 
 export default function LeadList({
@@ -55,20 +55,26 @@ export default function LeadList({
 
         {/* Filter tabs */}
         <div className="flex gap-1">
-          {FILTERS.map((f) => (
-            <button
-              key={f.value}
-              onClick={() => onFilterChange(f.value)}
-              className={cn(
-                "text-xs px-2.5 py-1 rounded-md transition-colors cursor-pointer",
-                filter === f.value
-                  ? "bg-primary text-white"
-                  : "text-gray-400 hover:bg-white/10 hover:text-white"
-              )}
-            >
-              {f.label}
-            </button>
-          ))}
+          {FILTERS.map((f) => {
+            const Icon = f.icon;
+            return (
+              <button
+                key={f.value}
+                onClick={() => onFilterChange(f.value)}
+                className={cn(
+                  "text-xs px-2.5 py-1 rounded-md transition-colors cursor-pointer flex items-center gap-1.5",
+                  filter === f.value
+                    ? "bg-primary text-white"
+                    : "text-gray-400 hover:bg-white/10 hover:text-white"
+                )}
+              >
+                {Icon && (
+                  <Icon className={cn("h-3.5 w-3.5", filter === f.value ? "text-white" : f.color)} />
+                )}
+                {f.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
