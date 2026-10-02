@@ -139,7 +139,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Variable | Description | Required |
 |----------|-------------|----------|
 | `NVIDIA_API_KEY` | Your NVIDIA NIM API key | Yes |
-| `NVIDIA_MODEL` | Model to use (default: `meta/llama-3.1-70b-instruct`) | No |
+| `NVIDIA_MODEL` | Model to use (default: `nvidia/nemotron-3-super-120b-a12b`) | No |
 
 Get an API key at [build.nvidia.com](https://build.nvidia.com).
 

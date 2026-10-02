@@ -157,7 +157,7 @@ export class NvidiaProvider implements AIProvider {
 // this is called server-side only
 export function createNvidiaProvider(): NvidiaProvider {
   const apiKey = process.env.NVIDIA_API_KEY;
-  const model = process.env.NVIDIA_MODEL || "meta/llama-3.1-8b-instruct";
+  const model = process.env.NVIDIA_MODEL || "nvidia/nemotron-3-super-120b-a12b";
 
   if (!apiKey) {
     throw new Error("NVIDIA_API_KEY environment variable is not set");
