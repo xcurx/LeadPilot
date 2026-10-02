@@ -17,9 +17,9 @@ const SEED_LEADS: SeedLead[] = [
   {
     name: "Rahul Sharma",
     location: "Nagpur",
-    propertyRequirement: "2BHK apartment",
-    budget: "₹70L",
-    buyingTimeline: "3 months",
+    propertyRequirement: "2BHK Apartment",
+    budget: "₹50L - ₹1 Cr",
+    buyingTimeline: "Short-term (1-3 months)",
     customerMessage:
       "Looking for a 2BHK in Nagpur, preferably near metro connectivity. Budget is around 70 lakhs. We want to finalize within 3 months. I'm concerned about maintenance charges.",
     analysis: {
@@ -49,9 +49,9 @@ const SEED_LEADS: SeedLead[] = [
   {
     name: "Priya Mehta",
     location: "Mumbai, Andheri West",
-    propertyRequirement: "3BHK apartment",
-    budget: "₹1.5 Cr",
-    buyingTimeline: "2 months",
+    propertyRequirement: "3BHK+ Apartment",
+    budget: "₹1 Cr - ₹3 Cr",
+    buyingTimeline: "Short-term (1-3 months)",
     customerMessage:
       "We're a family of four, looking to upgrade from our current 2BHK. Want a 3BHK in Andheri West, close to schools and the metro. Budget is up to 1.5 crore. We need to move before the new school session starts. Please share options with good amenities.",
     analysis: {
@@ -82,9 +82,9 @@ const SEED_LEADS: SeedLead[] = [
   {
     name: "Amit Verma",
     location: "Pune, Hinjewadi",
-    propertyRequirement: "2BHK or 3BHK",
-    budget: "₹50-80L",
-    buyingTimeline: "6 months",
+    propertyRequirement: "Exploring / Unsure",
+    budget: "₹50L - ₹1 Cr",
+    buyingTimeline: "Medium-term (3-6 months)",
     customerMessage:
       "I work in IT and might shift to Hinjewadi. Exploring options for 2BHK or 3BHK apartments. Budget is flexible between 50 to 80 lakhs. No immediate rush, maybe within 6 months. Interested in properties with good resale value.",
     analysis: {
@@ -114,9 +114,9 @@ const SEED_LEADS: SeedLead[] = [
   {
     name: "Riya Kapoor",
     location: "Delhi NCR",
-    propertyRequirement: "Residential plot",
-    budget: "Not decided",
-    buyingTimeline: "1 year",
+    propertyRequirement: "Plot / Land",
+    budget: "Exploring / Unsure",
+    buyingTimeline: "Long-term (6+ months)",
     customerMessage:
       "Just doing some research on residential plots in Delhi NCR region. Haven't decided the budget yet. Maybe within a year or so. Can you tell me what's available?",
     analysis: {
@@ -167,7 +167,14 @@ export async function seedDatabase(): Promise<void> {
       priorityScore: score,
       priorityLabel: label,
       status: "New",
-      followUps: [],
+      followUps: seed.name === "Priya Mehta" ? [
+        {
+          id: uuidv4(),
+          type: "Site Visit",
+          note: "Show 3BHK options near the Metro",
+          scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
+        }
+      ] : [],
       createdAt: now,
       updatedAt: now,
     };
