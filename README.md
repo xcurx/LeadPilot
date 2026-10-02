@@ -15,13 +15,13 @@ Real estate salespeople handle multiple inbound leads daily, each requiring diff
 
 LeadPilot AI solves this by bringing AI-powered analysis directly into the sales workflow.
 
-## Features
+## Features (Core Requirements)
 
-### Lead Intake
-- Form-based lead capture with name, location, property requirement, budget, timeline, and customer message
-- Client-side validation before submission
+### 1. Lead Intake
+- Form-based lead capture with Name, Location, Property requirement, Budget, Timeline, and a free-text Customer message.
+- Uses structured dropdowns for requirements/budget/timeline to ensure cleaner data collection while satisfying the assignment parameters.
 
-### AI Analysis
+### 2. AI Analysis
 Every lead receives an AI-generated analysis containing:
 - **Lead Summary** — concise overview of the lead
 - **Customer Intent** — what the customer is trying to achieve
@@ -30,7 +30,13 @@ Every lead receives an AI-generated analysis containing:
 - **Recommended Action** — what the salesperson should do next
 - **Suggested Response** — a professional response ready to send
 
-### Priority Scoring
+### 3. AI Copilot (Conversational Interface)
+Contextual chat grounded in the selected lead's data and analysis. Supports questions like:
+- "What should I emphasize on the call?"
+- "Make the suggested response more assertive."
+- "What concerns does this customer have?"
+
+### 4. Lead List & Prioritization
 AI extracts semantic signals (intent, urgency, budget clarity, requirement clarity), and the application calculates a deterministic priority score:
 
 ```
@@ -39,17 +45,25 @@ Score = Intent × 0.35 + Urgency × 0.30 + Budget Clarity × 0.15 + Requirement 
 
 Mapping: `≥80 → HOT`, `≥50 → WARM`, `<50 → COLD`
 
-### AI Copilot
-Contextual chat grounded in the selected lead's data and analysis. Supports questions like:
-- "What should I emphasize on the call?"
-- "Make the suggested response more assertive."
-- "What concerns does this customer have?"
+### 5. Clear Display
+- A premium, scannable "Masal AI" themed UI built with Tailwind CSS, Lucide icons, and modern glassmorphism aesthetic principles.
 
-### Follow-up Tracker
-- Status management (NEW → CONTACTED → QUALIFIED → SITE_VISIT → NEGOTIATION → CLOSED)
-- Follow-up date/time scheduling
-- Follow-up notes
-- Mark as contacted
+---
+
+## 🚀 "Your Own Feature" (Extra Additions)
+
+To genuinely help a salesperson before, during, and after a call, multiple extra features were added:
+
+1. **Pipeline Analytics Dashboard (Before the call):** 
+   - A high-level overview screen showing total leads, hot pipeline size, and pending follow-ups. Allows a salesperson to instantly know where to start their day.
+2. **Follow-Up Timeline Tracker (After the call):** 
+   - Salespeople can schedule Follow-ups (Calls, Meetings, Site Visits), add notes, and mark them as complete. This turns the app into a true CRM.
+3. **Editable AI Responses (During the call):** 
+   - The AI-generated suggested response can be edited directly on the screen and copied to the clipboard with one click for easy pasting into WhatsApp or Email.
+4. **Global Pipeline Search:** 
+   - A search bar in the sidebar that instantly filters leads by name, location, requirements, or keywords within the customer message.
+
+---
 
 ## Architecture
 
@@ -72,7 +86,6 @@ Contextual chat grounded in the selected lead's data and analysis. Supports ques
 │    Next.js Server    │
 │  /api/analyze        │
 │  /api/chat           │
-│  AI Service Layer    │
 │  Prompt Construction │
 │  Zod Validation      │
 └──────────┬───────────┘
@@ -80,41 +93,26 @@ Contextual chat grounded in the selected lead's data and analysis. Supports ques
            ▼
 ┌──────────────────────┐
 │     NVIDIA NIM       │
-│       LLM            │
+│  Llama-3.1-70b-instruct│
 └──────────────────────┘
 ```
 
 ## AI Model & API
 
 - **Provider**: NVIDIA NIM
-- **Model**: Configurable via `NVIDIA_MODEL` env var (default: `meta/llama-3.1-8b-instruct`)
-- **Architecture**: The AI provider is abstracted behind an `AIProvider` interface, allowing future provider swaps without UI changes
+- **Model**: `meta/llama-3.1-70b-instruct` (Configurable via `NVIDIA_MODEL` env var)
+- **Why 70B?**: The 70B instruction-tuned model is used because extracting strict JSON schemas and maintaining conversational context requires high instruction-following capabilities.
 
 ### How AI Calls Work
 
-1. **Analysis** (`POST /api/analyze`): Server constructs a structured prompt with lead data, sends to NVIDIA NIM, validates the JSON response with Zod, then calculates priority score deterministically in application code
-2. **Chat** (`POST /api/chat`): Server builds a context containing lead info + analysis + conversation history, sends to NVIDIA NIM with a system prompt that constrains responses to the selected lead
+1. **Analysis** (`POST /api/analyze`): Server constructs a structured prompt with lead data, sends to NVIDIA NIM, validates the JSON response with Zod, then calculates the priority score deterministically in application code.
+2. **Chat** (`POST /api/chat`): Server builds a context containing lead info + analysis + conversation history, sends to NVIDIA NIM with a system prompt that constrains responses to the selected lead.
 
 ## Data Persistence
 
 - **Engine**: IndexedDB via Dexie.js
-- **Tables**: `leads`, `conversations`
-- **Seed Data**: 4 realistic demo leads are inserted on first load when the database is empty
-
-No server-side database is needed. All data persists in the browser.
-
-## Priority Scoring
-
-Scoring logic is isolated in `lib/scoring.ts`:
-
-| Signal | Weight |
-|--------|--------|
-| Intent | 0.35 |
-| Urgency | 0.30 |
-| Budget Clarity | 0.15 |
-| Requirement Clarity | 0.20 |
-
-Signal levels: `high → 100`, `medium → 60`, `low → 20`
+- **Seed Data**: 4 realistic demo leads (with scheduled follow-ups) are inserted on first load when the database is empty.
+- **Why IndexedDB?**: Allows evaluators to test the application immediately upon opening the URL without needing to set up or configure a backend database like PostgreSQL.
 
 ## Local Setup
 
@@ -141,41 +139,26 @@ Open [http://localhost:3000](http://localhost:3000).
 | Variable | Description | Required |
 |----------|-------------|----------|
 | `NVIDIA_API_KEY` | Your NVIDIA NIM API key | Yes |
-| `NVIDIA_MODEL` | Model to use (default: `meta/llama-3.1-8b-instruct`) | No |
+| `NVIDIA_MODEL` | Model to use (default: `meta/llama-3.1-70b-instruct`) | No |
 
 Get an API key at [build.nvidia.com](https://build.nvidia.com).
 
-## Deployment
-
-Deploy to Vercel:
-
-1. Push to GitHub
-2. Import in Vercel
-3. Add `NVIDIA_API_KEY` and `NVIDIA_MODEL` as environment variables
-4. Deploy
-
 ## Key Technical Decisions
 
-1. **IndexedDB over PostgreSQL** — Sufficient for the assignment scope; no server-side DB management needed
-2. **Deterministic scoring** — AI extracts signals, app calculates score. Not "give me a score 1-100"
-3. **AI provider abstraction** — `AIProvider` interface allows future provider swaps
-4. **Zod validation** — Never blindly trust model output; validate before entering app state
-5. **Server-side AI calls** — API key stays on the server; browser never sees it
-6. **Seed data** — Evaluators see a useful dashboard immediately, not an empty state
+1. **IndexedDB over PostgreSQL** — Sufficient for the assignment scope; eliminates backend setup for reviewers.
+2. **Deterministic scoring** — AI extracts categorical signals (high/medium/low), but the application calculates the final score mathematically. This prevents AI hallucination on arbitrary numbers.
+3. **Zod validation** — Never blindly trust model output; the server validates the JSON schema before passing it to the client.
+4. **Server-side AI calls** — The API key stays securely on the server; the browser never sees it.
+5. **Seed data** — Evaluators see a useful, populated dashboard immediately, rather than a blank empty state.
+6. **Single Page Application (SPA)** — The entire dashboard lives on a single route to preserve state and ensure instant, frictionless navigation between leads without page reloads.
 
 ## Known Limitations
 
-- No authentication (by design — unnecessary for this prototype)
-- Data is browser-local (IndexedDB); no cross-device sync
-- Chat does not stream responses (kept simple to avoid unnecessary complexity)
-- No real-time updates across tabs
+- No authentication (by design — unnecessary for this prototype).
+- Data is browser-local (IndexedDB); there is no cross-device sync.
+- Chat does not stream responses (kept simple to avoid unnecessary complexity in standard Fetch API).
 
 ## AI Usage Disclosure
 
-This project uses AI (NVIDIA NIM) for:
-- Lead analysis and semantic understanding
-- Intent, urgency, and requirement extraction
-- Concern detection and recommendation generation
-- Contextual conversational assistance
-
-The application handles persistence, priority calculation, sorting, filtering, status management, and follow-up tracking — these are NOT delegated to the AI.
+- **NVIDIA NIM (nemotron-3-super-120b-a12b)**: Used as the core product feature to analyze leads, extract metadata, and power the Copilot chat.
+- **Google Antigravity / Gemini**: Used as a developer coding assistant to rapidly prototype the Next.js component architecture, write the Tailwind CSS styling, and debug React state management.
