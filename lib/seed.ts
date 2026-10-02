@@ -166,7 +166,8 @@ export async function seedDatabase(): Promise<void> {
       analysis: seed.analysis,
       priorityScore: score,
       priorityLabel: label,
-      status: "NEW",
+      status: "New",
+      followUps: [],
       createdAt: now,
       updatedAt: now,
     };

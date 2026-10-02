@@ -104,7 +104,8 @@ export default function Dashboard() {
       const newLead: Lead = {
         id: uuidv4(),
         ...formData,
-        status: "NEW",
+        status: "New",
+        followUps: [],
         createdAt: now,
         updatedAt: now,
       };

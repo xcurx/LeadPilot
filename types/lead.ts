@@ -1,10 +1,10 @@
 export type LeadStatus =
-  | "NEW"
-  | "CONTACTED"
-  | "QUALIFIED"
-  | "SITE_VISIT"
-  | "NEGOTIATION"
-  | "CLOSED";
+  | "New"
+  | "Contacted"
+  | "Qualified"
+  | "Site Visit"
+  | "Negotiation"
+  | "Closed";
 
 export type PriorityLabel = "HOT" | "WARM" | "COLD";
 
@@ -23,6 +23,16 @@ export interface LeadAnalysis {
   requirementClarity: SignalLevel;
 }
 
+export type FollowUpType = "Call" | "Email" | "Site Visit" | "Meeting" | "Other";
+
+export interface FollowUpEntry {
+  id: string;
+  type: FollowUpType;
+  note: string;
+  scheduledAt: string;
+  completedAt?: string;
+}
+
 export interface Lead {
   id: string;
   name: string;
@@ -39,6 +49,9 @@ export interface Lead {
 
   status: LeadStatus;
 
+  followUps?: FollowUpEntry[];
+
+  // deprecated — kept for backward compat with existing DB entries
   followUpAt?: string;
   followUpNote?: string;
 
