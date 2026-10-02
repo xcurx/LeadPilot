@@ -1,10 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { Lead, PriorityLabel } from "@/types/lead";
 import LeadListItem from "./LeadListItem";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Users, Flame, Sun, Snowflake } from "lucide-react";
+import { Users, Flame, Sun, Snowflake, Search } from "lucide-react";
 
 interface LeadListProps {
   leads: Lead[];
@@ -28,16 +29,27 @@ export default function LeadList({
   filter,
   onFilterChange,
 }: LeadListProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+
   // sort by priority score descending
   const sorted = [...leads].sort(
     (a, b) => (b.priorityScore ?? 0) - (a.priorityScore ?? 0)
   );
 
-  // apply filter
-  const filtered =
-    filter === "ALL"
-      ? sorted
-      : sorted.filter((l) => l.priorityLabel === filter);
+  // apply filter and search
+  const filtered = sorted.filter((l) => {
+    const matchesFilter = filter === "ALL" || l.priorityLabel === filter;
+    if (!matchesFilter) return false;
+
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      l.name.toLowerCase().includes(query) ||
+      l.location.toLowerCase().includes(query) ||
+      l.propertyRequirement.toLowerCase().includes(query) ||
+      l.customerMessage.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <div className="flex flex-col h-full text-gray-200">
@@ -51,6 +63,18 @@ export default function LeadList({
           <span className="text-xs text-gray-400 ml-auto">
             {leads.length}
           </span>
+        </div>
+
+        {/* Search */}
+        <div className="relative mb-3">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
+          <input
+            type="text"
+            placeholder="Search leads..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-black/20 border border-white/5 rounded-md py-1.5 pl-8 pr-3 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-primary/50 transition-colors"
+          />
         </div>
 
         {/* Filter tabs */}

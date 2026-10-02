@@ -118,7 +118,7 @@ export default function Copilot({ lead }: CopilotProps) {
   };
 
   return (
-    <Card className={`border-border bg-card shadow-sm flex flex-col transition-all duration-200 ${isExpanded ? "fixed inset-4 z-50 h-auto shadow-2xl" : "h-[400px]"}`}>
+    <Card className={`border-border bg-card shadow-sm flex flex-col transition-all duration-200 ${isExpanded ? "h-[650px]" : "h-[400px]"}`}>
       <CardHeader className="pb-2 shrink-0 flex flex-row items-center justify-between">
         <CardTitle className="text-base flex items-center gap-2">
           <Bot className="h-4 w-4 text-primary" />
